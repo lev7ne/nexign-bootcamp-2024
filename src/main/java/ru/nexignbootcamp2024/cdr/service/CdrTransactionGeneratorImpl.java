@@ -1,5 +1,6 @@
 package ru.nexignbootcamp2024.cdr.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +41,7 @@ public class CdrTransactionGeneratorImpl implements CdrTransactionGenerator {
 
     @Override
     @Transactional
+    @PostConstruct
     public void generateRandomCdrTransactions() {
         List<Subscriber> subscriberList = subscriberRepository.findAll();
         List<Long> msisdns = subscriberList.stream().map(Subscriber::getMsisdn).toList();

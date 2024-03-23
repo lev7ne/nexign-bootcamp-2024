@@ -25,11 +25,6 @@ class ReportServiceImplTest {
     @Autowired
     private ReportService reportService;
 
-    @BeforeEach
-    void setUp() {
-        cdrTransactionGenerator.generateRandomCdrTransactions();
-    }
-
     @Test
     void reportService_whenCallWithoutParam_thenCreateYearReport() throws IOException {
         Path dirPath = Paths.get(reportsRootDirectory + "/2023_total.json");
