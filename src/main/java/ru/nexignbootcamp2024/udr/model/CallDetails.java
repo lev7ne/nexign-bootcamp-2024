@@ -2,7 +2,10 @@ package ru.nexignbootcamp2024.udr.model;
 
 import lombok.Data;
 
-
+/**
+ * Класс описание объекта CallDetails с полем totalTime - суммарное время для запрашиваемого периода,
+ * в конструкторе приводится к формату, запрашиваемому в ТЗ
+ */
 @Data
 public class CallDetails {
     private String totalTime;

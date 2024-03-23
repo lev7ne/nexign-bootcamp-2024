@@ -22,7 +22,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Класс с методами, отвечающими за основную функциональность, требуемую в рамках ТЗ,
+ * создание отчетов (reports/) с разными параметрами
  */
 @Slf4j
 @Service
@@ -32,6 +33,10 @@ public class ReportServiceImpl implements ReportService {
     @Value("${cdr.rootDirectory}")
     private String cdrRootDirectory;
 
+    /**
+     * Создание годового отчета в директории (reports/) без передаваемых параметров,
+     * вывод отчета в консоль
+     */
     @Override
     public void generateReport() {
         List<Udr> udrList = new ArrayList<>();
@@ -67,6 +72,12 @@ public class ReportServiceImpl implements ReportService {
         System.out.println(json);
     }
 
+    /**
+     * Создание годового отчета в директории (reports/) для конкретного пользователя,
+     * вывод отчета в консоль
+     *
+     * @param msisdn
+     */
     @Override
     public void generateReport(Long msisdn) {
         List<Udr> udrList = new ArrayList<>();
@@ -77,15 +88,19 @@ public class ReportServiceImpl implements ReportService {
             List<CdrTransaction> cdrTransactionList = fromFileToCdrTransactionListWithoutMsisdn(stringCdrPath);
             summaryCdrTransaction.addAll(cdrTransactionList);
         }
-        cdrReader(msisdn, udrList, summaryCdrTransaction);
-
+        udrConstructor(msisdn, udrList, summaryCdrTransaction);
 
         String json = reportsWriter(reportsRootDirectory + "/" + msisdn + "_total.json", udrList);
 
         System.out.println(json);
     }
 
-
+    /**
+     * Создание отчета в директории (reports/) для конкретного пользователя, в конкретном месяце,
+     * вывод отчета в консоль
+     * @param msisdn
+     * @param month
+     */
     @Override
     public void generateReport(Long msisdn, Integer month) {
         List<Udr> udrList = new ArrayList<>();
@@ -93,7 +108,7 @@ public class ReportServiceImpl implements ReportService {
         String stringCdrPath = cdrRootDirectory + "/" + month + "_2023.txt";
         List<CdrTransaction> cdrTransactionListForMonth = fromFileToCdrTransactionListWithoutMsisdn(stringCdrPath);
 
-        cdrReader(msisdn, udrList, cdrTransactionListForMonth);
+        udrConstructor(msisdn, udrList, cdrTransactionListForMonth);
 
         String json = reportsWriter(reportsRootDirectory + "/" + month + "_" + msisdn + ".json", udrList);
 
@@ -101,13 +116,13 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
+     * Утилитарный метод для фильтрации полученных из файла данных и сбора объектов для записи в отчет (reports/)
      *
      * @param msisdn
      * @param udrList
      * @param cdrTransactionListForMonth
      */
-    private void cdrReader(Long msisdn, List<Udr> udrList, List<CdrTransaction> cdrTransactionListForMonth) {
-
+    private void udrConstructor(Long msisdn, List<Udr> udrList, List<CdrTransaction> cdrTransactionListForMonth) {
         List<CdrTransaction> cdrTransactionListForMonthForMsisdn = cdrTransactionListForMonth.stream()
                 .filter(cdrTransaction -> cdrTransaction.getMsisdn().equals(msisdn))
                 .toList();
@@ -130,9 +145,10 @@ public class ReportServiceImpl implements ReportService {
     }
 
     /**
+     * Утилитарный метод для чтения из файла в List<CdrTransaction>
      *
      * @param stringCdrPath
-     * @return
+     * @return Помесячный список CdrTransactions
      */
     private List<CdrTransaction> fromFileToCdrTransactionListWithoutMsisdn(String stringCdrPath) {
         List<CdrTransaction> cdrTransactionList = new ArrayList<>();
@@ -145,14 +161,14 @@ public class ReportServiceImpl implements ReportService {
                 log.error("Ошибка при загрузке: " + cdrPath);
             }
         }
-
         return cdrTransactionList;
     }
 
     /**
+     * Вспомогательный для утилитарного метода, отвечает за парсинга данных из строки в список объектов CdrTransaction
      *
      * @param value
-     * @return
+     * @return Сформированный из строки список CdrTransaction
      */
     private List<CdrTransaction> toCdrTransactionFromString(String value) {
         List<CdrTransaction> cdrTransactionList = new ArrayList<>();
@@ -167,15 +183,13 @@ public class ReportServiceImpl implements ReportService {
                     .build();
             cdrTransactionList.add(cdrTransaction);
         }
-
         return cdrTransactionList.stream()
                 .sorted(Comparator.comparing(CdrTransaction::getStartTime))
                 .toList();
     }
 
-
     /**
-     * Вспомогательный метод, создающий файл в дирректории reports/ и записывающий объект udrList в формате .json
+     * Утилитарный метод создания файла в директории reports/ и записи в этот файл объектов udrList в формате .json
      *
      * @param reportsPathString
      * @param udrList

@@ -25,6 +25,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Класс для описания единственного метода generateRandomCdrTransactions - генератор рандомных CdrTransactions,
+ * сохранение данные в CDR-отчеты (cdr/) и базу данных (H2)
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

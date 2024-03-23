@@ -6,6 +6,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * Класс описание объекта CdrTransaction с полями:
+ * id - уникальный идентификатор в базе данных,
+ * transactionType - тип транзакции incoming/outcoming,
+ * msisdn - идентификатор пользователя,
+ * startTime - точное время начала транзакции в формате unix timestamp,
+ * endTime - точное время окончания транзакции в формате unix timestamp
+ *
+ * Содержит enum TransactionType incoming/outcoming
+ */
 @Getter
 @Builder
 @AllArgsConstructor
