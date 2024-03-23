@@ -93,6 +93,7 @@ msisdn  - Mobile Subscriber Integrated Services Digital Number - номер мо
 - собрал схему БД
 - описал структуру классов Cdr и Subscriber
 - описал метод генерации случайных данных
+  
 Во втором задании,
 - описал структуру классов Udr и CallDetails
 - написал методы из ТЗ generateReport(...) с разными параметрами
